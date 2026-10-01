@@ -6,7 +6,7 @@
 > Progetto universitario di approfondimento e valutazione critica del lavoro:
 > *Finite mixtures of matrix variate Poisson-log normal distributions for three-way count data* (Silva, Qin, Rothstein, McNicholas, Subedi, Bioinformatics, 39(5), 2023, doi:10.1093/bioinformatics/btad167).
 
-## 📖 Descrizione
+## Descrizione
 
 Il progetto analizza un metodo di classificazione basata su modello per dati di conteggio RNA-seq organizzati in **matrici a tre vie** (tempi × variabili × geni). Il metodo si basa su una mistura finita di distribuzioni MVPLN (*Matrix Variate Poisson-log Normal*), un'estensione matriciale della MPLN, che permette di:
 
