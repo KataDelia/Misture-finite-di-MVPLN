@@ -1,0 +1,8 @@
+# BPCO
+https://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc=GDS5438
+
+# fission
+https://www.bioconductor.org/packages/release/data/experiment/html/fission.html
+
+# ipertensione
+https://www.ncbi.nlm.nih.gov/gds?linkname=pubmed_gds&from_uid=38145287
