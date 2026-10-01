@@ -21,30 +21,33 @@ Il progetto analizza un metodo di classificazione basata su modello per dati di 
 - **Modello MVPLN e sua mistura finita**: Assunzioni, funzione di densità, calcolo del numero di parametri.
 - **Framework di stima**: MCMC-EM, Variational Gaussian Approximation (VGA) e Approccio ibrido (VGA + MCMC).
 - **Identificabilità e Model Selection**: Criteri di informazione (BIC, ICL, AIC, AIC3) e Adjusted Rand Index (ARI).
-- **Applicazione Pratica (Script R): Caso di studio Ratti SHR vs WKY**
-  - Strutturazione dei dati trascrittomici in matrici 5x3 (5 tempi: settimane 8, 10, 12, 16, 24 × 3 nuclei del tronco encefalico: CVLM, RVLM, NTS).
-  - Preprocessing dei dati e sottocampionamento strategico per far fronte ai limiti computazionali.
-  - Valutazione delle performance di clustering tramite **Adjusted Rand Index** (pacchetto `mclust`) per neutralizzare il problema del *label switching* tipico degli algoritmi non supervisionati.
+- **Applicazioni Pratiche e Simulazioni (Script R)**:
+  1. **Ratti SHR vs WKY**: Strutturazione dati in matrici 5x3 (5 tempi × 3 nuclei del tronco encefalico), preprocessing e clustering tramite Adjusted Rand Index per valutare la partizione dei ceppi.
+  2. **Cellule immunitarie pediatriche (GEO GSE213192)**: Test aggiuntivo per verificare la capacità dell'algoritmo di discriminare matrici 2x2 relative ai linfociti (CD4 vs CD8) in pazienti in fase acuta (AC) e follow-up (FU).
 
 ## Analisi Critica
 
 L'aspetto distintivo di questo lavoro è la verifica pratica del pacchetto `mixMVPLN` su dataset reali, che ha portato alla luce diverse criticità implementative rilevanti:
 
--  **Gestione degli zeri (Filtro forzato):** L'algoritmo va in errore in presenza di valori nulli nelle matrici (a causa del logaritmo insito nella componente log-normale). Ciò costringe a eliminare a priori i geni con conteggi pari a zero, una forzatura tecnica problematica dato che i dati RNA-seq sono fisiologicamente ricchi di zeri (geni non espressi).
--  **Costo computazionale estremo:** L'approccio MCMC richiede tempi di elaborazione proibitivi. Per testare l'algoritmo localmente in tempi ragionevoli è necessario campionare un numero ristrettissimo di geni e impostare iterazioni irrisorie, rendendolo poco praticabile per pipeline trascrittomiche complete.
+- **Gestione degli zeri (Filtro forzato):** L'algoritmo va in errore in presenza di valori nulli nelle matrici (a causa del logaritmo insito nella componente log-normale). Ciò costringe a eliminare a priori i geni con conteggi pari a zero, una forzatura tecnica problematica dato che i dati RNA-seq sono fisiologicamente ricchi di zeri (geni non espressi).
+   **Costo computazionale estremo:** L'approccio MCMC richiede tempi di elaborazione proibitivi. Per testare l'algoritmo localmente in tempi ragionevoli è necessario campionare un numero ristrettissimo di geni e impostare iterazioni irrisorie.
 -  **Errori di esecuzione:** Interruzione frequente dell'algoritmo a causa della formazione di matrici singolari durante la stima.
--  **Limiti di scalabilità e convergenza:** Mancata convergenza con più di 2 cluster (riscontrata direttamente nel caso dei ratti) e forte instabilità elaborando oltre 200 geni.
--  **Incoerenza nei dati (Paper originale):** Utilizzo di dati microarray normalizzati (con metodo non specificato) trattati erroneamente come conteggi interi positivi RNA-seq nell'articolo di riferimento (caso delle cavie).
+-  **Limiti di scalabilità e convergenza:** Mancata convergenza con più di 2 cluster (riscontrata nel caso dei ratti) e forte instabilità elaborando oltre 200 geni.
+-  **Incoerenza nei dati (Paper originale):** Utilizzo di dati microarray normalizzati trattati erroneamente come conteggi interi positivi RNA-seq nell'articolo di riferimento (caso delle cavie).
 
 **Conclusione:** Sebbene l'intuizione metodologica sia innovativa e matematicamente ben formalizzata, l'implementazione software attuale non risulta sufficientemente robusta né scalabile per applicazioni bioinformatiche reali. 
 
-## Riproducibilità dello Script
+## Struttura del Repository
 
-Il repository include lo script R ottimizzato (`script_analisi.R`) per replicare il clustering sui ratti SHR e WKY. Le fasi principali includono:
-1. Combinazione dei dataset dei tre nuclei (NTS, RVLM, CVLM) per creare matrici a tre vie dinamiche.
-2. Pulizia dei dati (filtro sui positivi per i limiti del pacchetto) e campionamento casuale stratificato.
-3. Esecuzione dei tre framework di stima (`mvplnVGAclus`, `mvplnMCMCclus`, `mvplnHybriDclus`).
-4. Valutazione finale dell'accuratezza della partizione.
+```text
+├── data/
+│   ├── NTS_RVLM_CVLM_data.RData  # Dati trascrittomici ratti (Nuclei del tronco encefalico)
+│   └── GSE213192_raw_counts.csv  # Dati di conteggio RNA-seq linfociti CD4/CD8 (da database GEO)
+├── scripts/
+│   ├── script_analisi.R          # Script principale: preprocessing, matrici 5x3 e clustering ratti SHR vs WKY
+│   └── simulazione.R   # Script test aggiuntivo: estrazione matrici 2x2 e clustering CD4 vs CD8
+└── README.md
+```
 
 ## Strumenti e Pacchetti
 
